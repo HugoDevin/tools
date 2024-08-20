@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加密與解密</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+
+<body>
+    <h1>AES 加密與解密示例</h1>
+
+
+    <p>輸入密鑰:</p>
+    <input type="text" id="key" value="">
+    <br><br>
+
+    <p>輸入偏移量 (IV):</p>
+    <input type="text" id="iv" value="">
+    <br><br>
+
+    <p>輸入要加密的訊息:</p>
+    <textarea id="plaintext" class="target" rows="3" cols="50"></textarea>
+    <br><br>
+
+
+    <button onclick="encryptMessage()">加密</button>
+    <button onclick="decryptMessage()">解密</button>
+
+    <h3>加/解密後的Base64結果:</h3>
+    <textarea id="resultMessage" class="result" readonly></textarea>
+
+
+    <h1>Base64 編碼/解碼</h1>
+    <div>
+        <h3>Base64 編碼</h3>
+        <textarea id="inputForBase64Encode" class="target" rows="3" cols="50" placeholder="輸入要編碼的明文"></textarea><br>
+        <button onclick="encodeBase64()">編碼</button>
+        <p>編碼後的Base64結果:</span></p>
+        <textarea id="base64Encoded" class="result" readonly></textarea>
+    </div>
+
+    <div>
+        <h3>Base64 解碼</h3>
+        <textarea id="inputForBase64Decode" class="target" rows="3" cols="50"
+            placeholder="輸入要解碼的Base64字符串"></textarea><br>
+        <button onclick="decodeBase64()">解碼</button>
+
+        <p>解碼後的明文:</p>
+        <textarea id="base64Decoded" class="result" readonly></textarea>
+    </div>
+
+    <style>
+        .target {
+            width: 350px;
+        }
+
+        .result {
+            width: 350px;
+            height: 50px;
+            background-color: #EEEEEE
+        }
+    </style>
+    <script>
+        function encryptMessage() {
+            var plaintext = document.getElementById("plaintext").value;
+            var key = CryptoJS.enc.Utf8.parse(document.getElementById("key").value);
+            var iv = CryptoJS.enc.Utf8.parse(document.getElementById("iv").value);
+
+            var encrypted = CryptoJS.AES.encrypt(plaintext, key, {
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+
+            var encryptedBase64 = encrypted.toString();
+            document.getElementById("resultMessage").textContent = encryptedBase64;
+        }
+
+        function decryptMessage() {
+            var encryptedBase64 = document.getElementById("plaintext").value;
+            var key = CryptoJS.enc.Utf8.parse(document.getElementById("key").value);
+            var iv = CryptoJS.enc.Utf8.parse(document.getElementById("iv").value);
+
+            var decrypted = CryptoJS.AES.decrypt(encryptedBase64, key, {
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+
+            var plaintextDecrypted = decrypted.toString(CryptoJS.enc.Utf8);
+            document.getElementById("resultMessage").textContent = plaintextDecrypted;
+        }
+
+        // Base64 編碼
+        function encodeBase64() {
+            var input = document.getElementById("inputForBase64Encode").value;
+            var encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(input));
+            document.getElementById("base64Encoded").textContent = encoded;
+        }
+
+        // Base64 解碼
+        function decodeBase64() {
+            var input = document.getElementById("inputForBase64Decode").value;
+            var decoded = CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(input));
+            document.getElementById("base64Decoded").textContent = decoded;
+        }
+    </script>
+</body>
+
+</html>
